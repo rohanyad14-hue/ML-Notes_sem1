@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" width="100%" height="260">
+  <rect width="720" height="280" fill="#f8fafc" rx="8" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="210" y="26" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1e3a8a">K-Means Clustering & The Elbow Method</text>
+  
+  <!-- Left: 3 Clusters Plot -->
+  <text x="80" y="55" font-family="sans-serif" font-size="12" font-weight="bold" fill="#334155">Feature Space (K=3 Clusters)</text>
+  <rect x="50" y="65" width="270" height="190" fill="#ffffff" stroke="#cbd5e1" rx="4"/>
+  
+  <!-- Cluster 1 (Blue) -->
+  <circle cx="100" cy="110" r="5" fill="#3b82f6"/><circle cx="120" cy="100" r="5" fill="#3b82f6"/><circle cx="110" cy="130" r="5" fill="#3b82f6"/><circle cx="130" cy="120" r="5" fill="#3b82f6"/>
+  <!-- Centroid 1 -->
+  <polygon points="115,108 120,118 110,118" fill="#1d4ed8" stroke="#000000" stroke-width="1.5"/>
+
+  <!-- Cluster 2 (Green) -->
+  <circle cx="230" cy="110" r="5" fill="#10b981"/><circle cx="250" cy="100" r="5" fill="#10b981"/><circle cx="220" cy="130" r="5" fill="#10b981"/><circle cx="240" cy="135" r="5" fill="#10b981"/>
+  <!-- Centroid 2 -->
+  <polygon points="235,112 240,122 230,122" fill="#047857" stroke="#000000" stroke-width="1.5"/>
+
+  <!-- Cluster 3 (Orange) -->
+  <circle cx="170" cy="200" r="5" fill="#f59e0b"/><circle cx="190" cy="190" r="5" fill="#f59e0b"/><circle cx="160" cy="220" r="5" fill="#f59e0b"/><circle cx="180" cy="225" r="5" fill="#f59e0b"/>
+  <!-- Centroid 3 -->
+  <polygon points="175,202 180,212 170,212" fill="#b45309" stroke="#000000" stroke-width="1.5"/>
+
+  <!-- Right: Elbow Method Curve -->
+  <text x="430" y="55" font-family="sans-serif" font-size="12" font-weight="bold" fill="#334155">Elbow Curve: WCSS vs. K</text>
+  <rect x="380" y="65" width="290" height="190" fill="#ffffff" stroke="#cbd5e1" rx="4"/>
+  <!-- Axes -->
+  <line x1="420" y1="230" x2="640" y2="230" stroke="#334155" stroke-width="1.5"/>
+  <line x1="420" y1="230" x2="420" y2="85" stroke="#334155" stroke-width="1.5"/>
+  <text x="510" y="250" font-family="sans-serif" font-size="10.5" fill="#334155">Number of Clusters (K)</text>
+  <text x="390" y="80" font-family="sans-serif" font-size="10.5" fill="#334155">WCSS</text>
+
+  <!-- Elbow Line Path -->
+  <path d="M 430,95 L 470,140 L 510,185 L 560,205 L 610,215" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+  <circle cx="430" cy="95" r="4" fill="#2563eb"/><circle cx="470" cy="140" r="4" fill="#2563eb"/><circle cx="510" cy="185" r="5" fill="#dc2626"/><circle cx="560" cy="205" r="4" fill="#2563eb"/><circle cx="610" cy="215" r="4" fill="#2563eb"/>
+  
+  <!-- Elbow Annotation -->
+  <text x="525" y="175" font-family="sans-serif" font-size="11" font-weight="bold" fill="#dc2626">← Elbow (Optimal K = 3)</text>
+</svg>

@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Logistic Regression: Pen-and-Paper Written Exam Master Guide</title>
+<!-- KaTeX CSS & JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "\\[", right: "\\]", display: true},
+            {left: "$", right: "$", display: false},
+            {left: "\\(", right: "\\)", display: false}
+        ],
+        throwOnError: false
+    });
+});
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@page {
+    size: A4;
+    margin: 14mm 14mm 14mm 14mm;
+    @bottom-right {
+        content: "Page " counter(page) " of " counter(pages);
+        font-family: 'Inter', sans-serif;
+        font-size: 8pt;
+        color: #64748b;
+    }
+}
+
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    background-color: #ffffff;
+    line-height: 1.45;
+    font-size: 9.2pt;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Inter', sans-serif;
+    color: #0f172a;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-top: 1.2em;
+    margin-bottom: 0.5em;
+}
+
+h1 {
+    font-size: 19pt;
+    color: #1e3a8a;
+    border-bottom: 2.5px solid #1e3a8a;
+    padding-bottom: 6px;
+    margin-top: 0;
+}
+
+h2 {
+    font-size: 13.5pt;
+    color: #1e40af;
+    border-bottom: 1.5px solid #cbd5e1;
+    padding-bottom: 4px;
+    margin-top: 1.4em;
+}
+
+h3 {
+    font-size: 11pt;
+    color: #0f172a;
+    margin-top: 1em;
+}
+
+p {
+    margin-top: 0.3em;
+    margin-bottom: 0.6em;
+}
+
+/* Top Hero Banner */
+.doc-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #3b82f6 100%);
+    color: #ffffff;
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin-bottom: 18px;
+}
+
+.doc-header h1 {
+    color: #ffffff;
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.3);
+    margin: 0 0 8px 0;
+    padding-bottom: 6px;
+    font-size: 18pt;
+}
+
+.doc-header .subtitle {
+    font-size: 10.5pt;
+    font-weight: 400;
+    opacity: 0.95;
+    margin-bottom: 10px;
+}
+
+.doc-header .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 8.5pt;
+}
+
+.doc-header .meta-item strong {
+    color: #93c5fd;
+}
+
+/* Callout Boxes */
+.card {
+    border-radius: 5px;
+    padding: 11px 14px;
+    margin: 12px 0;
+    font-size: 9.4pt;
+}
+
+.card-theory {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4.5px solid #2563eb;
+}
+
+.card-proof {
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-left: 4.5px solid #0f172a;
+}
+
+.card-good {
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-left: 4.5px solid #16a34a;
+}
+
+.card-lacking {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-left: 4.5px solid #dc2626;
+}
+
+.card-edge {
+    background-color: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 4.5px solid #d97706;
+}
+
+.card-problem {
+    background-color: #faf5ff;
+    border: 1.5px solid #e9d5ff;
+    border-left: 5px solid #7c3aed;
+    margin: 16px 0;
+}
+
+.card-title {
+    font-weight: 700;
+    font-size: 10.2pt;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-theory .card-title { color: #1e40af; }
+.card-proof .card-title { color: #0f172a; }
+.card-good .card-title { color: #15803d; }
+.card-lacking .card-title { color: #b91c1c; }
+.card-edge .card-title { color: #b45309; }
+.card-problem .card-title { color: #6d28d9; }
+
+.badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 7.8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-marks {
+    background-color: #7c3aed;
+    color: #ffffff;
+}
+
+.badge-derivation {
+    background-color: #0f172a;
+    color: #ffffff;
+}
+
+.badge-edge {
+    background-color: #d97706;
+    color: #ffffff;
+}
+
+/* Equations and Math display */
+.math-display {
+    margin: 8px 0;
+    padding: 6px 10px;
+    background: #ffffff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 4px;
+    text-align: center;
+    overflow-x: auto;
+}
+
+/* Scratchpad Arithmetic Box */
+.scratchpad {
+    background: #f8fafc;
+    border: 1px dashed #94a3b8;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin: 6px 0;
+    font-family: 'Fira Code', Consolas, monospace;
+    font-size: 8.6pt;
+    color: #334155;
+    line-height: 1.45;
+}
+
+.boxed-answer {
+    display: inline-block;
+    border: 2px solid #16a34a;
+    background-color: #f0fdf4;
+    color: #14532d;
+    padding: 3px 10px;
+    font-weight: 700;
+    border-radius: 3px;
+    margin: 4px 0;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 8.8pt;
+}
+
+th, td {
+    border: 1px solid #cbd5e1;
+    padding: 6px 9px;
+    text-align: left;
+}
+
+th {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    font-weight: 600;
+}
+
+tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+/* Images */
+.fig-container {
+    text-align: center;
+    margin: 14px 0;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.fig-container img {
+    max-width: 78%;
+    max-height: 220px;
+    height: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.fig-caption {
+    font-size: 8.2pt;
+    color: #64748b;
+    font-style: italic;
+    margin-top: 5px;
+}
+
+/* Utility page breaks */
+.page-break {
+    page-break-before: always;
+    break-before: page;
+}
+
+.avoid-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+ul, ol {
+    margin-top: 0.3em;
+    margin-bottom: 0.6em;
+    padding-left: 20px;
+}
+
+li {
+    margin-bottom: 0.25em;
+}
+
+strong {
+    color: #0f172a;
+}
+</style>
+</head>
+<body>
+
+<!-- Header Banner -->
+<div class="doc-header">
+    <h1>Logistic Regression: Pen-and-Paper Exam Master Manual</h1>
+    <div class="subtitle">Complete Step-by-Step Derivations, Fully Worked Exam Numericals, Edge Cases, Strengths & Limitations</div>
+    <div class="meta-grid">
+        <div class="meta-item"><strong>Course:</strong> MACSE504 Machine Learning</div>
+        <div class="meta-item"><strong>Target:</strong> VIT University Written Exams & Viva</div>
+        <div class="meta-item"><strong>Focus:</strong> Pen-and-Paper Calculations & Proofs</div>
+    </div>
+</div>
+
+<!-- Quick Navigation / Overview -->
+<div class="card card-theory">
+    <div class="card-title">Document Structure & Exam Blueprint</div>
+    <ul style="margin: 0; padding-left: 18px;">
+        <li><strong>Part 1: Core Mathematical Foundations & Derivations</strong> (Sigmoid from Odds, BCE Loss from MLE, Sigmoid Derivative proof, Chain Rule Gradient proof, Hessian convexity proof).</li>
+        <li><strong>Part 2: Fully Solved Pen-and-Paper Numerical Question Bank</strong> (7 distinct question types with full arithmetic scratchpads: Forward pass, Batch Gradient Descent, Linear & Non-Linear Decision Boundaries, $L_1/L_2$ Regularization, Multinomial Softmax, Odds Ratios, Cost-Sensitive Thresholds).</li>
+        <li><strong>Part 3: Where Logistic Regression Shines (Comprehensive Strengths)</strong> (Calibrated probabilities, odds ratio interpretability, convex global convergence, computational speed $\mathcal{O}(d)$, streaming/SGD).</li>
+        <li><strong>Part 4: Where Logistic Regression is Lacking (Limitations & Failure Modes)</strong> (Linear boundary constraint, multicollinearity breakdown, outlier sensitivity, no feature interactions).</li>
+        <li><strong>Part 5: Edge Cases & Tricky Exam Pitfalls</strong> (Complete separation / Hauck-Donner effect, class imbalance bias shift, XOR impossibility algebraic proof, collinear features, numerical underflow/overflow).</li>
+        <li><strong>Part 6: Fast-Track Exam Hall Cheatsheet & Comparison Matrix</strong> (Comparison table vs Linear Regression, SVM, Naive Bayes; Golden Formula Sheet; Top 10 Viva/Exam Q&As).</li>
+    </ul>
+</div>
+
+<!-- ========================================================================= -->
+<!-- PART 1: CORE MATHEMATICAL FOUNDATIONS & DERIVATIONS -->
+<!-- ========================================================================= -->
+<h2>Part 1: Core Mathematical Foundations & "Must-Derive" Exam Proofs</h2>
+
+<h3>1.1 Why Linear Regression Fails for Classification (Classic 5-Mark Question)</h3>
+<p>In standard Ordinary Least Squares (OLS) regression, we model $\hat{y} = \mathbf{w}^T \mathbf{x} + b$. When applied to binary classification ($y \in \{0, 1\}$), linear regression suffers from three fundamental theoretical flaws:</p>
+<ol>
+    <li><strong>Unbounded Predictions ($-\infty < \hat{y} < \infty$):</strong> Linear regression outputs values outside $[0, 1]$. A prediction of $\hat{y} = 1.64$ or $\hat{y} = -0.32$ cannot be interpreted as a valid probability.</li>
+    <li><strong>Extreme Sensitivity to Outliers (High Leverage Points):</strong> Points located far from the decision boundary in the positive or negative direction torque the regression line, shifting the 0.5 decision boundary and causing severe misclassifications on perfectly separable data.</li>
+    <li><strong>Heteroscedasticity (Violation of Gauss-Markov Theorem):</strong> For a binary variable, variance is $\text{Var}(Y|\mathbf{x}) = p(\mathbf{x})(1 - p(\mathbf{x}))$. Since the error variance directly depends on $\mathbf{x}$, errors are non-constant (heteroscedastic), rendering OLS hypothesis testing and standard errors invalid.</li>
+</ol>
+
+<h3>1.2 Derivation of the Sigmoid Function from Odds and Log-Odds (The Logit Link)</h3>
+<p>To restrict outputs strictly to probabilities $p \in (0, 1)$, we model the <strong>log-odds (logit)</strong> as a linear combination of features:</p>
+<div class="math-display">
+$$\text{Odds} = \frac{p}{1 - p} \quad \text{where } p = P(Y=1|\mathbf{x})$$
+$$\text{Logit Link:} \quad \ln\left(\frac{p}{1 - p}\right) = z = \mathbf{w}^T \mathbf{x} + b = \sum_{j=1}^d w_j x_j + b$$
+</div>
+
+<div class="card card-proof">
+    <div class="card-title"><span>Pen-and-Paper Step-by-Step Derivation: Inverting the Logit to find $p = \sigma(z)$</span> <span class="badge badge-derivation">Derivation 1.1</span></div>
+    <p><strong>Step 1:</strong> Exponentiate both sides of the logit equation to solve for odds:</p>
+    <div class="math-display">
+    $$e^{\ln\left(\frac{p}{1 - p}\right)} = e^z \implies \frac{p}{1 - p} = e^z$$
+    </div>
+    <p><strong>Step 2:</strong> Cross-multiply and expand terms:</p>
+    <div class="math-display">
+    $$p = e^z (1 - p) \implies p = e^z - p \cdot e^z$$
+    </div>
+    <p><strong>Step 3:</strong> Collect all terms containing $p$ on the left-hand side:</p>
+    <div class="math-display">
+    $$p + p \cdot e^z = e^z \implies p(1 + e^z) = e^z$$
+    </div>
+    <p><strong>Step 4:</strong> Divide by $(1 + e^z)$ and divide numerator and denominator by $e^z$:</p>
+    <div class="math-display">
+    $$p = \frac{e^z}{1 + e^z} = \frac{\frac{e^z}{e^z}}{\frac{1 + e^z}{e^z}} = \mathbf{\frac{1}{1 + e^{-z}} \equiv \sigma(z)}$$
+    </div>
+    <p><strong>Fundamental Sigmoid Properties:</strong></p>
+    <ul>
+        <li><strong>Inflection point:</strong> $\sigma(0) = \frac{1}{1 + e^0} = \frac{1}{2} = 0.5$.</li>
+        <li><strong>Symmetry:</strong> $\sigma(-z) = \frac{1}{1 + e^z} = \frac{e^{-z}}{e^{-z} + 1} = 1 - \frac{1}{1 + e^{-z}} = 1 - \sigma(z)$.</li>
+        <li><strong>Asymptotic limits:</strong> $\lim_{z \to +\infty} \sigma(z) = 1$ and $\lim_{z \to -\infty} \sigma(z) = 0$.</li>
+    </ul>
+</div>
+
+<div class="card card-proof">
+    <div class="card-title"><span>Exam Proof 1: Derivative of the Sigmoid Function $\sigma'(z) = \sigma(z)(1 - \sigma(z))$</span> <span class="badge badge-marks">5 Marks</span></div>
+    <p><em>Frequent Exam Question: "Prove that the derivative of the standard logistic sigmoid function is $\sigma'(z) = \sigma(z)(1 - \sigma(z))$."</em></p>
+    <p><strong>Proof using the Power / Chain Rule:</strong></p>
+    <p>Write $\sigma(z) = (1 + e^{-z})^{-1}$. Differentiating with respect to $z$:</p>
+    <div class="math-display">
+    $$\frac{d}{dz}\sigma(z) = -1 \cdot (1 + e^{-z})^{-2} \cdot \frac{d}{dz}(1 + e^{-z}) = -(1 + e^{-z})^{-2} \cdot (-e^{-z}) = \frac{e^{-z}}{(1 + e^{-z})^2}$$
+    </div>
+    <p>Split the fraction into two factors:</p>
+    <div class="math-display">
+    $$\frac{d}{dz}\sigma(z) = \left( \frac{1}{1 + e^{-z}} \right) \cdot \left( \frac{e^{-z}}{1 + e^{-z}} \right)$$
+    </div>
+    <p>Notice that the first factor is $\sigma(z)$. For the second factor, add and subtract 1 in the numerator:</p>
+    <div class="math-display">
+    $$\frac{e^{-z}}{1 + e^{-z}} = \frac{(1 + e^{-z}) - 1}{1 + e^{-z}} = \frac{1 + e^{-z}}{1 + e^{-z}} - \frac{1}{1 + e^{-z}} = 1 - \sigma(z)$$
+    </div>
+    <p>Substitute back:</p>
+    <div class="math-display">
+    $$\boxed{\mathbf{\sigma'(z) = \sigma(z)\big(1 - \sigma(z)\big)}} \quad \blacksquare$$
+    </div>
+    <p><strong>Key Insight for Written Exams:</strong> At $z = 0$, $\sigma(0) = 0.5$, so $\sigma'(0) = 0.5 \times 0.5 = \mathbf{0.25}$ (the maximum rate of change). As $|z| \to \infty$, $\sigma'(z) \to 0$, which causes the <em>vanishing gradient problem</em> when saturated.</p>
+</div>
+
+<!-- Embedded Figure 1 -->
+<div class="fig-container">
+    <img src="images/fig1_sigmoid_derivative.png" alt="Sigmoid and its derivative">
+    <div class="fig-caption">Figure 1: The Sigmoid Activation Function $\sigma(z)$ and its derivative $\sigma'(z)$. Notice maximum derivative 0.25 at $z=0$ and asymptotic saturation as $|z| \to \infty$.</div>
+</div>
+
+
+
+<h3>1.3 Derivation of Binary Cross-Entropy Loss via Maximum Likelihood Estimation (MLE)</h3>
+<p>Let training dataset $\mathcal{D} = \{(\mathbf{x}_1, y_1), (\mathbf{x}_2, y_2), \dots, (\mathbf{x}_m, y_m)\}$ where labels $y_i \in \{0, 1\}$. We treat each target $y_i$ as a Bernoulli random variable with success parameter $\hat{y}_i = P(Y=1|\mathbf{x}_i) = \sigma(\mathbf{w}^T \mathbf{x}_i + b)$.</p>
+
+<div class="card card-proof">
+    <div class="card-title"><span>Pen-and-Paper Derivation of Binary Cross-Entropy (Log-Loss)</span> <span class="badge badge-derivation">Derivation 1.2</span></div>
+    <p><strong>Step 1: Write the Probability Mass Function (PMF) for a single sample:</strong></p>
+    <div class="math-display">
+    $$P(Y = y_i | \mathbf{x}_i) = \hat{y}_i^{y_i} (1 - \hat{y}_i)^{1 - y_i} \quad \text{where } y_i \in \{0, 1\}$$
+    </div>
+    <p><em>Check:</em> If $y_i = 1$, $P = \hat{y}_i^1 (1-\hat{y}_i)^0 = \hat{y}_i$. If $y_i = 0$, $P = \hat{y}_i^0 (1-\hat{y}_i)^1 = 1 - \hat{y}_i$. Perfect!</p>
+
+    <p><strong>Step 2: Construct the Joint Likelihood function over $m$ I.I.D. samples:</strong></p>
+    <div class="math-display">
+    $$L(\mathbf{w}, b) = \prod_{i=1}^m P(Y = y_i | \mathbf{x}_i) = \prod_{i=1}^m \hat{y}_i^{y_i} (1 - \hat{y}_i)^{1 - y_i}$$
+    </div>
+
+    <p><strong>Step 3: Take the natural logarithm to get the Log-Likelihood $\ell(\mathbf{w}, b)$ (converts products to sums):</strong></p>
+    <div class="math-display">
+    $$\ell(\mathbf{w}, b) = \ln L(\mathbf{w}, b) = \sum_{i=1}^m \ln\left[ \hat{y}_i^{y_i} (1 - \hat{y}_i)^{1 - y_i} \right] = \sum_{i=1}^m \Big[ y_i \ln(\hat{y}_i) + (1 - y_i) \ln(1 - \hat{y}_i) \Big]$$
+    </div>
+
+    <p><strong>Step 4: Formulate the Cost Function $J(\mathbf{w}, b)$ via Empirical Risk Minimization:</strong></p>
+    <p>In machine learning, optimization frameworks minimize cost rather than maximizing likelihood. We define $J(\mathbf{w}, b)$ as the negative average log-likelihood:</p>
+    <div class="math-display">
+    $$\boxed{\mathbf{J(\mathbf{w}, b) = -\frac{1}{m} \sum_{i=1}^m \Big[ y_i \ln(\hat{y}_i) + (1 - y_i) \ln(1 - \hat{y}_i) \Big]}} \quad \blacksquare$$
+    </div>
+</div>
+
+<h3>1.4 Why Mean Squared Error (MSE) is NEVER Used for Logistic Regression (Vital 10-Mark Exam Topic)</h3>
+<p>Students often ask: <em>"Why can't we just use $J_{\text{MSE}} = \frac{1}{2m} \sum (y_i - \hat{y}_i)^2$ with $\hat{y}_i = \sigma(z_i)$?"</em> In an exam, you must provide two rigorous arguments:</p>
+
+<div class="card card-lacking">
+    <div class="card-title"><span>Failure Mode: Why MSE Fails with Sigmoidal Activation</span> <span class="badge badge-marks">Exam Contrast</span></div>
+    <p><strong>1. Non-Convex Cost Surface (Local Minima Traps):</strong></p>
+    <p>When MSE is composed with the non-linear sigmoid function $\sigma(\mathbf{w}^T \mathbf{x} + b)$, the resulting Hessian matrix is not positive semi-definite everywhere. The optimization landscape becomes bumpy with numerous saddle points and sub-optimal local minima. Gradient descent can get permanently stuck.</p>
+    <p><strong>2. Severe Vanishing Gradient on Disastrous Predictions:</strong></p>
+    <p>Differentiating MSE for a single sample $L_{\text{MSE}} = \frac{1}{2}(y - \sigma(z))^2$ with respect to weight $w_j$:</p>
+    <div class="math-display">
+    $$\frac{\partial L_{\text{MSE}}}{\partial w_j} = (\sigma(z) - y) \cdot \sigma'(z) \cdot x_j = (\hat{y} - y) \cdot \mathbf{\hat{y}(1 - \hat{y})} \cdot x_j$$
+    </div>
+    <p>Now analyze a pathological case: Suppose true label is $y = 1$, but the model makes a catastrophic error predicting $z = -8$, so $\hat{y} = \sigma(-8) \approx 0.0003$.</p>
+    <ul>
+        <li>Error term: $(\hat{y} - y) = 0.0003 - 1 = -0.9997$ (huge error!).</li>
+        <li>Sigmoid derivative factor: $\hat{y}(1 - \hat{y}) = 0.0003 \times (0.9997) \approx \mathbf{0.0003}$.</li>
+        <li>Gradient: $\frac{\partial L_{\text{MSE}}}{\partial w_j} = (-0.9997) \times (0.0003) \times x_j \approx \mathbf{-0.0003 x_j \approx 0}$!</li>
+    </ul>
+    <p><strong>The Catastrophe:</strong> Even though the prediction was completely wrong, the gradient is virtually zero! The model learns at a snail's pace and cannot correct itself. In contrast, for Binary Cross-Entropy, the derivative simplifies cleanly to $(\hat{y} - y)x_j = -0.9997 x_j$, maintaining a massive, decisive gradient update!</p>
+</div>
+
+<!-- Embedded Figure 2 -->
+<div class="fig-container">
+    <img src="images/fig2_loss_comparison.png" alt="Loss Comparison">
+    <div class="fig-caption">Figure 2: Convex BCE Loss vs Non-Convex MSE Loss when true label $y=1$. As $\hat{y} \to 0$, BCE loss approaches $\infty$ providing strong gradient pull, whereas MSE caps at 1.0 with a vanishing gradient.</div>
+</div>
+
+
+
+<h3>1.5 Exam Proof 2: Full Derivation of the Gradient Updates via Chain Rule</h3>
+<p>To update parameters using Gradient Descent, we must derive $\frac{\partial J}{\partial w_j}$ and $\frac{\partial J}{\partial b}$.</p>
+
+<div class="card card-proof">
+    <div class="card-title"><span>Chain Rule Derivation of Logistic Regression Parameter Gradients</span> <span class="badge badge-marks">10 Marks</span></div>
+    <p>For a single sample with loss $\mathcal{L} = -\big[ y \ln(\hat{y}) + (1 - y) \ln(1 - \hat{y}) \big]$ where $\hat{y} = \sigma(z)$ and $z = \sum_{j=1}^d w_j x_j + b$:</p>
+    <div class="math-display">
+    $$\frac{\partial \mathcal{L}}{\partial w_j} = \frac{\partial \mathcal{L}}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z} \cdot \frac{\partial z}{\partial w_j}$$
+    </div>
+
+    <p><strong>Step 1: Compute $\frac{\partial \mathcal{L}}{\partial \hat{y}}$:</strong></p>
+    <div class="math-display">
+    $$\frac{\partial \mathcal{L}}{\partial \hat{y}} = -\left[ \frac{y}{\hat{y}} + \frac{1 - y}{1 - \hat{y}} \cdot (-1) \right] = -\frac{y}{\hat{y}} + \frac{1 - y}{1 - \hat{y}} = \frac{-y(1 - \hat{y}) + \hat{y}(1 - y)}{\hat{y}(1 - \hat{y})} = \frac{-y + y\hat{y} + \hat{y} - y\hat{y}}{\hat{y}(1 - \hat{y})} = \mathbf{\frac{\hat{y} - y}{\hat{y}(1 - \hat{y})}}$$
+    </div>
+
+    <p><strong>Step 2: Compute $\frac{\partial \hat{y}}{\partial z}$ using our Sigmoid Derivative from Proof 1:</strong></p>
+    <div class="math-display">
+    $$\frac{\partial \hat{y}}{\partial z} = \sigma'(z) = \mathbf{\hat{y}(1 - \hat{y})}$$
+    </div>
+
+    <p><strong>Step 3: Multiply Step 1 and Step 2 to find $\frac{\partial \mathcal{L}}{\partial z}$ (The "Miraculous Cancellation"):</strong></p>
+    <div class="math-display">
+    $$\frac{\partial \mathcal{L}}{\partial z} = \frac{\partial \mathcal{L}}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z} = \left( \frac{\hat{y} - y}{\hat{y}(1 - \hat{y})} \right) \cdot \big[ \hat{y}(1 - \hat{y}) \big] = \mathbf{\hat{y} - y}$$
+    </div>
+    <p><em>Note for exam: Point out this exact mathematical cancellation! The denominator $\hat{y}(1-\hat{y})$ from the log loss cancels perfectly with the sigmoid derivative!</em></p>
+
+    <p><strong>Step 4: Compute $\frac{\partial z}{\partial w_j}$ and $\frac{\partial z}{\partial b}$:</strong></p>
+    <div class="math-display">
+    $$\frac{\partial z}{\partial w_j} = \frac{\partial}{\partial w_j}\left( \sum_{k} w_k x_k + b \right) = x_j, \qquad \frac{\partial z}{\partial b} = 1$$
+    </div>
+
+    <p><strong>Step 5: Apply chain rule and average across all $m$ training observations:</strong></p>
+    <div class="math-display">
+    $$\boxed{\mathbf{\frac{\partial J}{\partial w_j} = \frac{1}{m} \sum_{i=1}^m (\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}}} \qquad \boxed{\mathbf{\frac{\partial J}{\partial b} = \frac{1}{m} \sum_{i=1}^m (\hat{y}^{(i)} - y^{(i)})}}$$
+    </div>
+    <p><strong>Gradient Descent Parameter Update Rule:</strong></p>
+    <div class="math-display">
+    $$w_j \leftarrow w_j - \alpha \frac{\partial J}{\partial w_j} = w_j - \frac{\alpha}{m} \sum_{i=1}^m (\hat{y}^{(i)} - y^{(i)}) x_j^{(i)}$$
+    $$b \leftarrow b - \alpha \frac{\partial J}{\partial b} = b - \frac{\alpha}{m} \sum_{i=1}^m (\hat{y}^{(i)} - y^{(i)})$$
+    </div>
+</div>
+
+<h3>1.6 Mathematical Proof of Convexity via the Hessian Matrix</h3>
+<p>To prove that Binary Cross-Entropy has no local minima and is strictly convex, compute the second-order partial derivatives (the Hessian matrix $\mathbf{H}$):</p>
+<div class="math-display">
+$$H_{jk} = \frac{\partial^2 J}{\partial w_j \partial w_k} = \frac{\partial}{\partial w_k} \left[ \frac{1}{m} \sum_{i=1}^m (\sigma(\mathbf{w}^T \mathbf{x}^{(i)} + b) - y^{(i)}) x_j^{(i)} \right] = \frac{1}{m} \sum_{i=1}^m \sigma(z^{(i)})\big(1 - \sigma(z^{(i)})\big) x_j^{(i)} x_k^{(i)}$$
+</div>
+<p>In compact matrix notation:</p>
+<div class="math-display">
+$$\mathbf{H} = \frac{1}{m} \mathbf{X}^T \mathbf{D} \mathbf{X}$$
+</div>
+<p>where $\mathbf{D} \in \mathbb{R}^{m \times m}$ is a diagonal weight matrix with elements $D_{ii} = \hat{y}^{(i)}(1 - \hat{y}^{(i)})$. Since $0 < \hat{y}^{(i)} < 1$, every diagonal entry $D_{ii} > 0$, making $\mathbf{D}$ strictly positive definite. For any arbitrary non-zero vector $\mathbf{v} \in \mathbb{R}^d$:</p>
+<div class="math-display">
+$$\mathbf{v}^T \mathbf{H} \mathbf{v} = \frac{1}{m} \mathbf{v}^T (\mathbf{X}^T \mathbf{D} \mathbf{X}) \mathbf{v} = \frac{1}{m} (\mathbf{X}\mathbf{v})^T \mathbf{D} (\mathbf{X}\mathbf{v}) = \frac{1}{m} \sum_{i=1}^m D_{ii} (\mathbf{x}_i^T \mathbf{v})^2 \ge 0$$
+</div>
+<p>Because $\mathbf{v}^T \mathbf{H} \mathbf{v} \ge 0$, $\mathbf{H}$ is <strong>Positive Semi-Definite (PSD)</strong> everywhere. Therefore, the cost function $J(\mathbf{w})$ is <strong>globally convex</strong>, guaranteeing that standard gradient descent, L-BFGS, or Newton-Raphson will always converge to the global minimum.</p>
+
+
+
+<!-- ========================================================================= -->
+<!-- PART 2: PEN-AND-PAPER SOLVED EXAM QUESTION BANK -->
+<!-- ========================================================================= -->
+<div class="page-break"></div>
+<h2>Part 2: Fully Solved Pen-and-Paper Numerical Question Bank</h2>
+<p><em>These problems are modeled directly on university examination standards (VIT University, GATE, Master's CS/Data Science). Each question includes full arithmetic steps, scratchpads, and presentation formatting.</em></p>
+
+<!-- PROBLEM 1 -->
+<div class="card card-problem">
+    <div class="card-title"><span>Problem 2.1: Forward Pass, Sigmoid Evaluation, Odds & Threshold Decision</span> <span class="badge badge-marks">6 Marks</span></div>
+    <p><strong>Question:</strong> A trained binary logistic regression classifier has weights $w_1 = 0.8$, $w_2 = -1.2$, and bias $b = 0.4$. A test observation has features $x_1 = 2.5$ and $x_2 = 1.0$, with true label $y = 1$.</p>
+    <ol type="a">
+        <li>Compute the net input logit $z$.</li>
+        <li>Compute the predicted probability $\hat{y} = P(Y=1|\mathbf{x})$ using pen-and-paper arithmetic ($e^{-1.2} \approx 0.3012$).</li>
+        <li>Calculate the Odds and the Log-Odds of this observation.</li>
+        <li>Predict the class using: (i) default threshold $\tau = 0.5$, (ii) conservative threshold $\tau = 0.80$.</li>
+        <li>Calculate the individual sample Binary Cross-Entropy loss ($\ln(0.7685) \approx -0.2633$).</li>
+    </ol>
+
+    <hr style="border: 0; border-top: 1px dashed #d8b4fe; margin: 10px 0;">
+
+    <p><strong>Step-by-Step Pen-and-Paper Solution:</strong></p>
+    <p><strong>(a) Net Linear Logit $z$:</strong></p>
+    <div class="scratchpad">
+    z = w1 * x1 + w2 * x2 + b
+      = (0.8)(2.5) + (-1.2)(1.0) + 0.4
+      = 2.00 - 1.20 + 0.40 = 1.20
+    </div>
+    <p>$$\boxed{\mathbf{z = 1.20}}$$</p>
+
+    <p><strong>(b) Predicted Probability $\hat{y}$:</strong></p>
+    <div class="scratchpad">
+    y_hat = 1 / (1 + e^(-z)) = 1 / (1 + e^(-1.20))
+    Given e^(-1.20) ≈ 0.3012
+    Denominator = 1 + 0.3012 = 1.3012
+    y_hat = 1.0 / 1.3012 = 0.76852... ≈ 0.7685 (or 76.85%)
+    </div>
+    <p>$$\boxed{\mathbf{\hat{y} = 0.7685}}$$</p>
+
+    <p><strong>(c) Odds and Log-Odds:</strong></p>
+    <div class="scratchpad">
+    Odds = y_hat / (1 - y_hat) = 0.7685 / (1 - 0.7685) = 0.7685 / 0.2315 ≈ 3.3197
+    Check via e^z: e^(1.20) ≈ 3.3201 (matches within rounding!)
+    Log-Odds = ln(Odds) = ln(3.32) = 1.20 = z
+    </div>
+    <p>$$\boxed{\mathbf{\text{Odds} = 3.32 : 1}}, \quad \boxed{\mathbf{\text{Log-Odds} = 1.20}}$$</p>
+
+    <p><strong>(d) Classification Decisions:</strong></p>
+    <ul>
+        <li>For $\tau = 0.5$: Since $\hat{y} = 0.7685 \ge 0.5$, <strong>Predicted Class = 1</strong> (Correct prediction!).</li>
+        <li>For $\tau = 0.8$: Since $\hat{y} = 0.7685 < 0.80$, <strong>Predicted Class = 0</strong>.</li>
+    </ul>
+
+    <p><strong>(e) Binary Cross-Entropy Loss:</strong></p>
+    <div class="scratchpad">
+    L = -[y * ln(y_hat) + (1 - y) * ln(1 - y_hat)]
+    Since y = 1:
+    L = -[1 * ln(0.7685) + 0] = -(-0.2633) = 0.2633
+    </div>
+    <p>$$\boxed{\mathbf{\mathcal{L} = 0.2633}}$$</p>
+</div>
+
+
+
+<!-- PROBLEM 2 -->
+<div class="card card-problem">
+    <div class="card-title"><span>Problem 2.2: Full Batch Gradient Descent Epoch with Multiple Points</span> <span class="badge badge-marks">10 Marks</span></div>
+    <p><strong>Question:</strong> Consider a mini-dataset of $m = 3$ observations with 2 features each:</p>
+    <table style="width: 80%; margin: 8px auto;">
+        <tr><th>Sample $i$</th><th>$x_1$</th><th>$x_2$</th><th>True Label $y$</th></tr>
+        <tr><td>1</td><td>1.0</td><td>2.0</td><td>1</td></tr>
+        <tr><td>2</td><td>2.0</td><td>1.0</td><td>0</td></tr>
+        <tr><td>3</td><td>3.0</td><td>3.0</td><td>1</td></tr>
+    </table>
+    <p>Initial model parameters are $w_1 = 0.2$, $w_2 = -0.4$, and bias $b = 0.1$. The learning rate is $\alpha = 0.2$.</p>
+    <ol type="a">
+        <li>Calculate the linear score $z^{(i)}$, prediction $\hat{y}^{(i)}$, error $e^{(i)} = (\hat{y}^{(i)} - y^{(i)})$, and individual loss for all 3 samples.</li>
+        <li>Compute the total batch Cross-Entropy Cost $J(\mathbf{w}, b)$.</li>
+        <li>Compute the gradients $\frac{\partial J}{\partial w_1}$, $\frac{\partial J}{\partial w_2}$, and $\frac{\partial J}{\partial b}$.</li>
+        <li>Perform one full step of Gradient Descent to obtain updated parameters $w_1', w_2', b'$.</li>
+    </ol>
+
+    <hr style="border: 0; border-top: 1px dashed #d8b4fe; margin: 10px 0;">
+
+    <p><strong>Step-by-Step Pen-and-Paper Solution:</strong></p>
+
+    <p><strong>(a) Forward Pass and Error Computation:</strong></p>
+    <div class="scratchpad">
+    Sample 1: x = [1.0, 2.0], y = 1
+      z1 = (0.2)(1.0) + (-0.4)(2.0) + 0.1 = 0.2 - 0.8 + 0.1 = -0.50
+      y_hat_1 = 1 / (1 + e^(0.50)) = 1 / (1 + 1.6487) = 1 / 2.6487 ≈ 0.3775
+      e1 = y_hat_1 - y1 = 0.3775 - 1.0 = -0.6225
+      L1 = -ln(0.3775) ≈ 0.9742
+
+    Sample 2: x = [2.0, 1.0], y = 0
+      z2 = (0.2)(2.0) + (-0.4)(1.0) + 0.1 = 0.4 - 0.4 + 0.1 = +0.10
+      y_hat_2 = 1 / (1 + e^(-0.10)) = 1 / (1 + 0.9048) = 1 / 1.9048 ≈ 0.5250
+      e2 = y_hat_2 - y2 = 0.5250 - 0.0 = +0.5250
+      L2 = -ln(1 - 0.5250) = -ln(0.4750) ≈ 0.7444
+
+    Sample 3: x = [3.0, 3.0], y = 1
+      z3 = (0.2)(3.0) + (-0.4)(3.0) + 0.1 = 0.6 - 1.2 + 0.1 = -0.50
+      y_hat_3 = 1 / (1 + e^(0.50)) = 1 / 2.6487 ≈ 0.3775
+      e3 = y_hat_3 - y3 = 0.3775 - 1.0 = -0.6225
+      L3 = -ln(0.3775) ≈ 0.9742
+    </div>
+
+    <p><strong>Summary Table for Exam Presentation:</strong></p>
+    <table>
+        <tr><th>$i$</th><th>$x_{i1}$</th><th>$x_{i2}$</th><th>$y_i$</th><th>$z_i$</th><th>$\hat{y}_i$</th><th>Error $e_i = (\hat{y}_i - y_i)$</th><th>Loss $\mathcal{L}_i$</th></tr>
+        <tr><td>1</td><td>1.0</td><td>2.0</td><td>1</td><td>-0.50</td><td>0.3775</td><td>-0.6225</td><td>0.9742</td></tr>
+        <tr><td>2</td><td>2.0</td><td>1.0</td><td>0</td><td>+0.10</td><td>0.5250</td><td>+0.5250</td><td>0.7444</td></tr>
+        <tr><td>3</td><td>3.0</td><td>3.0</td><td>1</td><td>-0.50</td><td>0.3775</td><td>-0.6225</td><td>0.9742</td></tr>
+        <tr><td colspan="6"><strong>Column Sums ($\sum$):</strong></td><td><strong>-0.7200</strong></td><td><strong>2.6928</strong></td></tr>
+    </table>
+
+    <p><strong>(b) Batch Cost Function $J(\mathbf{w}, b)$:</strong></p>
+    <div class="math-display">
+    $$J = \frac{1}{3} \sum_{i=1}^3 \mathcal{L}_i = \frac{0.9742 + 0.7444 + 0.9742}{3} = \frac{2.6928}{3} = \mathbf{0.8976}$$
+    </div>
+
+    <p><strong>(c) Gradient Calculation:</strong></p>
+    <div class="scratchpad">
+    dJ/dw1 = (1/3) * ∑ [e_i * x_i1]
+           = (1/3) * [ (-0.6225)(1.0) + (0.5250)(2.0) + (-0.6225)(3.0) ]
+           = (1/3) * [ -0.6225 + 1.0500 - 1.8675 ]
+           = (1/3) * [ -1.4400 ] = -0.4800
+
+    dJ/dw2 = (1/3) * ∑ [e_i * x_i2]
+           = (1/3) * [ (-0.6225)(2.0) + (0.5250)(1.0) + (-0.6225)(3.0) ]
+           = (1/3) * [ -1.2450 + 0.5250 - 1.8675 ]
+           = (1/3) * [ -2.5875 ] = -0.8625
+
+    dJ/db  = (1/3) * ∑ [e_i]
+           = (1/3) * [ -0.6225 + 0.5250 - 0.6225 ]
+           = (1/3) * [ -0.7200 ] = -0.2400
+    </div>
+
+    <p><strong>(d) One Step Gradient Descent Parameter Updates ($\alpha = 0.2$):</strong></p>
+    <div class="scratchpad">
+    w1_new = w1 - alpha * (dJ/dw1) = 0.20 - (0.2)(-0.4800) = 0.20 + 0.0960 = 0.2960
+    w2_new = w2 - alpha * (dJ/dw2) = -0.40 - (0.2)(-0.8625) = -0.40 + 0.1725 = -0.2275
+    b_new  = b  - alpha * (dJ/db)  = 0.10 - (0.2)(-0.2400) = 0.10 + 0.0480 = 0.1480
+    </div>
+    <p>
+    $$\boxed{\mathbf{w_1^{(1)} = 0.2960}}, \quad \boxed{\mathbf{w_2^{(1)} = -0.2275}}, \quad \boxed{\mathbf{b^{(1)} = 0.1480}}$$
+    </p>
+</div>
+
+
+
+<!-- PROBLEM 3 -->
+<div class="card card-problem">
+    <div class="card-title"><span>Problem 2.3: Deriving and Plotting Decision Boundaries (Linear & Polynomial)</span> <span class="badge badge-marks">10 Marks</span></div>
+    <p><strong>Question:</strong></p>
+    <ol type="a">
+        <li>A linear logistic classifier has weights $\mathbf{w} = [3, -2]^T$ and bias $b = -6$.
+            <ul>
+                <li>Derive the algebraic equation of the decision boundary at probability threshold $\tau = 0.5$. Express it in slope-intercept form $x_2 = m x_1 + c$.</li>
+                <li>Determine the $x_1$-intercept and $x_2$-intercept.</li>
+                <li>Classify test points $A(2, 1)$ and $B(1, -3)$.</li>
+                <li>How does the decision boundary shift if the threshold is changed to $\tau = 0.8$? ($\ln(4) \approx 1.3863$).</li>
+            </ul>
+        </li>
+        <li>Suppose feature expansion creates $z = 2x_1^2 + 2x_2^2 - 8$. Derive and identify the geometric shape of the decision boundary. Which region represents Class 1?</li>
+    </ol>
+
+    <hr style="border: 0; border-top: 1px dashed #d8b4fe; margin: 10px 0;">
+
+    <p><strong>Step-by-Step Pen-and-Paper Solution:</strong></p>
+    <p><strong>(a) Linear Boundary at $\tau = 0.5$:</strong></p>
+    <p>By definition, at threshold $\tau = 0.5$, $\hat{y} = \sigma(z) = 0.5 \iff z = 0$.</p>
+    <div class="scratchpad">
+    w1 * x1 + w2 * x2 + b = 0
+    3*x1 - 2*x2 - 6 = 0
+    2*x2 = 3*x1 - 6
+    x2 = (3/2)*x1 - 3
+    </div>
+    <p>$$\boxed{\mathbf{x_2 = 1.5 x_1 - 3}} \quad \text{(Slope } m = 1.5, \text{ y-intercept } c = -3\text{)}$$</p>
+    <ul>
+        <li><strong>$x_2$-intercept:</strong> Set $x_1 = 0 \implies x_2 = -3 \implies (0, -3)$.</li>
+        <li><strong>$x_1$-intercept:</strong> Set $x_2 = 0 \implies 1.5 x_1 = 3 \implies x_1 = 2 \implies (2, 0)$.</li>
+    </ul>
+
+    <p><strong>Classification of Test Points:</strong></p>
+    <ul>
+        <li>Point $A(2, 1)$: $z_A = 3(2) - 2(1) - 6 = 6 - 2 - 6 = -2 < 0 \implies \hat{y}_A < 0.5 \implies$ <strong>Class 0</strong>.</li>
+        <li>Point $B(1, -3)$: $z_B = 3(1) - 2(-3) - 6 = 3 + 6 - 6 = +3 > 0 \implies \hat{y}_B > 0.5 \implies$ <strong>Class 1</strong>.</li>
+    </ul>
+
+    <p><strong>Threshold Shift to $\tau = 0.8$:</strong></p>
+    <div class="scratchpad">
+    p = 0.8 => Odds = 0.8 / 0.2 = 4
+    z = ln(Odds) = ln(4) ≈ 1.3863
+    3*x1 - 2*x2 - 6 = 1.3863
+    2*x2 = 3*x1 - 7.3863
+    x2 = 1.5*x1 - 3.69315
+    </div>
+    <p>$$\boxed{\mathbf{x_2 = 1.5 x_1 - 3.693}}$$</p>
+    <p><em>Exam Observation:</em> The slope remains exactly the same ($m = 1.5$), but the boundary shifts <strong>parallelly downwards</strong>, making it harder for points to be classified as Class 1 (increasing precision, decreasing false positives).</p>
+
+    <p><strong>(b) Non-Linear Polynomial Boundary:</strong></p>
+    <div class="scratchpad">
+    Setting z = 0 => 2*x1^2 + 2*x2^2 - 8 = 0
+    Divide by 2:
+    x1^2 + x2^2 = 4 = 2^2
+    </div>
+    <p>$$\boxed{\mathbf{x_1^2 + x_2^2 = 4}}$$</p>
+    <p>This is a <strong>Circle centered at the origin $(0, 0)$ with radius $R = 2$</strong>. For points inside the circle (e.g., $(0,0)$), $z = -8 < 0 \implies$ <strong>Class 0</strong>. For points outside the circle (e.g., $(3,3)$), $z = 2(9)+2(9)-8 = 28 > 0 \implies$ <strong>Class 1</strong>.</p>
+</div>
+
+<!-- Embedded Figure 3 -->
+<div class="fig-container">
+    <img src="images/fig3_decision_boundaries.png" alt="Decision Boundaries">
+    <div class="fig-caption">Figure 3: (Left) Linear Decision Boundary showing threshold shift from $\tau=0.5$ to $\tau=0.8$. (Right) Non-Linear Circular Decision Boundary achieved via quadratic polynomial feature expansion.</div>
+</div>
+
+
+
+<!-- PROBLEM 4 -->
+<div class="card card-problem">
+    <div class="card-title"><span>Problem 2.4: Regularized Logistic Regression ($L_2$ Ridge & $L_1$ Lasso)</span> <span class="badge badge-marks">8 Marks</span></div>
+    <p><strong>Question:</strong> An overfitted logistic regression model has parameter vector $\mathbf{w} = [2.0, -3.0]^T$, dataset size $m = 20$, and regularizer hyperparameter $\lambda = 4.0$. At the current step, the unregularized cross-entropy gradient is $\nabla J_0 = [0.25, -0.40]^T$. The learning rate is $\alpha = 0.1$.</p>
+    <ol type="a">
+        <li>Write the mathematical objective function for $L_2$ regularized logistic regression.</li>
+        <li>Calculate the $L_2$ penalty contribution to the objective.</li>
+        <li>Derive the $L_2$ regularized gradient update formula showing the weight decay shrinkage factor.</li>
+        <li>Compute the updated weights $w_1', w_2'$ under $L_2$ regularization.</li>
+        <li>Explain geometrically why $L_1$ regularization produces exact zeros (feature selection) while $L_2$ only shrinks weights asymptotically towards zero.</li>
+    </ol>
+
+    <hr style="border: 0; border-top: 1px dashed #d8b4fe; margin: 10px 0;">
+
+    <p><strong>Step-by-Step Pen-and-Paper Solution:</strong></p>
+    <p><strong>(a) $L_2$ Objective Function:</strong></p>
+    <div class="math-display">
+    $$J_{\text{reg}}(\mathbf{w}, b) = -\frac{1}{m} \sum_{i=1}^m \Big[ y^{(i)} \ln(\hat{y}^{(i)}) + (1 - y^{(i)}) \ln(1 - \hat{y}^{(i)}) \Big] + \frac{\lambda}{2m} \|\mathbf{w}\|_2^2$$
+    </div>
+    <p><em>Important exam note:</em> Notice the regularization term does NOT penalize the bias $b$!</p>
+
+    <p><strong>(b) $L_2$ Penalty Calculation:</strong></p>
+    <div class="scratchpad">
+    ||w||_2^2 = w1^2 + w2^2 = (2.0)^2 + (-3.0)^2 = 4.0 + 9.0 = 13.0
+    Penalty = (lambda / (2m)) * ||w||_2^2 = (4.0 / (2 * 20)) * 13.0 = (4.0 / 40.0) * 13.0 = 0.10 * 13.0 = 1.30
+    </div>
+    <p>$$\boxed{\text{Penalty} = \mathbf{1.30}}$$</p>
+
+    <p><strong>(c) Gradient and Weight Decay Shrinkage Formula:</strong></p>
+    <div class="math-display">
+    $$\frac{\partial J_{\text{reg}}}{\partial w_j} = \frac{\partial J_0}{\partial w_j} + \frac{\lambda}{m} w_j$$
+    $$w_j^{(t+1)} = w_j^{(t)} - \alpha \left( \frac{\partial J_0}{\partial w_j} + \frac{\lambda}{m} w_j^{(t)} \right) = \mathbf{w_j^{(t)} \left( 1 - \frac{\alpha \lambda}{m} \right) - \alpha \frac{\partial J_0}{\partial w_j}}$$
+    </div>
+    <p>The term $\left( 1 - \frac{\alpha \lambda}{m} \right)$ is the <strong>Weight Decay Factor</strong> (always $< 1$).</p>
+
+    <p><strong>(d) Numerical Weight Updates:</strong></p>
+    <div class="scratchpad">
+    Weight Decay Factor = 1 - (alpha * lambda / m) = 1 - (0.1 * 4.0 / 20) = 1 - (0.4 / 20) = 1 - 0.02 = 0.98
+
+    Update w1:
+    w1_new = (2.0) * (0.98) - 0.1 * (0.25)
+           = 1.960 - 0.025 = 1.935
+
+    Update w2:
+    w2_new = (-3.0) * (0.98) - 0.1 * (-0.40)
+           = -2.940 + 0.040 = -2.900
+    </div>
+    <p>$$\boxed{\mathbf{w_1^{(1)} = 1.935}}, \quad \boxed{\mathbf{w_2^{(1)} = -2.900}}$$</p>
+
+    <p><strong>(e) Geometric Difference: $L_1$ (Lasso) vs $L_2$ (Ridge):</strong></p>
+    <ul>
+        <li><strong>$L_2$ (Ridge):</strong> The constraint region is a hypersphere (smooth circle). The elliptical contours of the unregularized loss typically touch the circle along a curve where neither coordinate is zero. Hence, weights are shrunk smoothly, but remain non-zero.</li>
+        <li><strong>$L_1$ (Lasso):</strong> The constraint region is a hyper-cross-polytope (a diamond in 2D with sharp vertices on the coordinate axes). Contours of the loss function frequently intersect the constraint region at these sharp corners, forcing coefficients to become <strong>exactly zero</strong> ($\mathbf{w}_j = 0$), performing intrinsic feature selection.</li>
+    </ul>
+</div>
+
+
+
+<!-- PROBLEM 5 -->
+<div class="card card-problem">
+    <div class="card-title"><span>Problem 2.5: Multinomial Logistic Regression (Softmax Regression - 3 Classes)</span> <span class="badge badge-marks">10 Marks</span></div>
+    <p><strong>Question:</strong> A 3-class classification problem (Classes $k \in \{0, 1, 2\}$) uses multinomial logistic regression. For an input vector $\mathbf{x} = [2.0, -1.0]^T$, the learned weight vectors and biases are:</p>
+    <ul>
+        <li>Class 0: $\mathbf{w}_0 = [1.0, 0.5]^T, \quad b_0 = 0.2$</li>
+        <li>Class 1: $\mathbf{w}_1 = [-0.5, 2.0]^T, \quad b_1 = -0.5$</li>
+        <li>Class 2: $\mathbf{w}_2 = [0.5, -1.0]^T, \quad b_2 = 0.0$</li>
+    </ul>
+    <p>The ground truth label for this sample is <strong>Class 1</strong> (One-hot vector $\mathbf{y} = [0, 1, 0]^T$).</p>
+    <ol type="a">
+        <li>Compute the raw logits $z_0, z_1, z_2$.</li>
+        <li>Compute the unnormalized exponentials $e^{z_k}$ and the Softmax normalization denominator.</li>
+        <li>Compute the predicted probabilities $\hat{y}_0, \hat{y}_1, \hat{y}_2$. Verify that $\sum \hat{y}_k = 1.0$.</li>
+        <li>Calculate the Categorical Cross-Entropy Loss for this sample ($\ln(0.00234) \approx -6.057$).</li>
+        <li>Compute the error vector $\mathbf{e} = \hat{\mathbf{y}} - \mathbf{y}$ used for gradient backpropagation.</li>
+    </ol>
+
+    <hr style="border: 0; border-top: 1px dashed #d8b4fe; margin: 10px 0;">
+
+    <p><strong>Step-by-Step Pen-and-Paper Solution:</strong></p>
+    <p><strong>(a) Raw Logits $z_k = \mathbf{w}_k^T \mathbf{x} + b_k$:</strong></p>
+    <div class="scratchpad">
+    z0 = (1.0)(2.0) + (0.5)(-1.0) + 0.2 = 2.0 - 0.5 + 0.2 = 1.70
+    z1 = (-0.5)(2.0) + (2.0)(-1.0) - 0.5 = -1.0 - 2.0 - 0.5 = -3.50
+    z2 = (0.5)(2.0) + (-1.0)(-1.0) + 0.0 = 1.0 + 1.0 + 0.0 = 2.00
+    </div>
+    <p>$$\boxed{\mathbf{z_0 = 1.70}}, \quad \boxed{\mathbf{z_1 = -3.50}}, \quad \boxed{\mathbf{z_2 = 2.00}}$$</p>
+
+    <p><strong>(b) Exponentials $e^{z_k}$ and Denominator:</strong></p>
+    <div class="scratchpad">
+    e^(z0) = e^(1.70) ≈ 5.4739
+    e^(z1) = e^(-3.50) ≈ 0.0302
+    e^(z2) = e^(2.00) ≈ 7.3891
+
+    Sum (Denominator) = 5.4739 + 0.0302 + 7.3891 = 12.8932
+    </div>
+
+    <p><strong>(c) Softmax Normalized Probabilities $P(Y=k|\mathbf{x}) = \frac{e^{z_k}}{\sum_{j} e^{z_j}}$:</strong></p>
+    <div class="scratchpad">
+    y_hat_0 = 5.4739 / 12.8932 ≈ 0.4246 (42.46%)
+    y_hat_1 = 0.0302 / 12.8932 ≈ 0.00234 ≈ 0.0023 (0.23%)
+    y_hat_2 = 7.3891 / 12.8932 ≈ 0.5731 (57.31%)
+
+    Verification: 0.4246 + 0.0023 + 0.5731 = 1.0000. Verified!
+    </div>
+    <p>
+    $$\boxed{\mathbf{\hat{y}_0 = 0.4246}}, \quad \boxed{\mathbf{\hat{y}_1 = 0.0023}}, \quad \boxed{\mathbf{\hat{y}_2 = 0.5731}}$$
+    </p>
+
+    <p><strong>(d) Categorical Cross-Entropy Loss:</strong></p>
+    <div class="math-display">
+    $$\mathcal{L} = -\sum_{k=0}^2 y_k \ln(\hat{y}_k) = -\Big[ 0 \cdot \ln(0.4246) + 1 \cdot \ln(0.00234) + 0 \cdot \ln(0.5731) \Big] = -\ln(0.00234) \approx \mathbf{6.057}$$
+    </div>
+    <p>$$\boxed{\mathbf{\mathcal{L} = 6.057}}$$</p>
+    <p><em>Exam Note:</em> The loss is huge (6.06) because the model predicted a near-zero probability ($0.23\%$) for the true class (Class 1), heavily penalizing the model!</p>
+
+    <p><strong>(e) Error Vector $\mathbf{e} = \hat{\mathbf{y}} - \mathbf{y}$:</strong></p>
+    <div class="scratchpad">
+    e0 = y_hat_0 - y0 = 0.4246 - 0.0 = +0.4246
+    e1 = y_hat_1 - y1 = 0.0023 - 1.0 = -0.9977
+    e2 = y_hat_2 - y2 = 0.5731 - 0.0 = +0.5731
+    </div>
+    <p>$$\boxed{\mathbf{e = [+0.4246, -0.9977, +0.5731]^T}}$$</p>
+    <p>Notice that the error sum $\sum e_k = +0.4246 - 0.9977 + 0.5731 = 0.0000$! This zero-sum property holds universally for softmax backpropagation.</p>
+</div>
+
+
+
+<!-- PROBLEM 6 -->
+<div class="card card-problem">
+    <div class="card-title"><span>Problem 2.6: Odds Ratios & Real-World Feature Interpretation (Medical ML Focus)</span> <span class="badge badge-marks">6 Marks</span></div>
+    <p><strong>Question:</strong> A clinical logistic regression model predicts the probability of developing coronary heart disease within 10 years:</p>
+    <div class="math-display">
+    $$\ln\left(\frac{p}{1-p}\right) = -3.80 + 0.05 \cdot \text{Age} + 0.02 \cdot \text{SystolicBP} + 0.90 \cdot \text{Smoker}$$
+    </div>
+    <p>where $\text{Smoker} \in \{0, 1\}$, $\text{Age}$ is in years, and $\text{SystolicBP}$ is in mmHg.</p>
+    <ol type="a">
+        <li>Calculate the <strong>Odds Ratio (OR)</strong> associated with being a smoker holding all other variables constant. Provide the clinical interpretation. ($e^{0.90} \approx 2.4596$).</li>
+        <li>What is the percentage increase in the odds of heart disease for a person who is 10 years older? ($e^{0.50} \approx 1.6487$).</li>
+        <li>Calculate the estimated risk (probability $p$) for a 60-year-old smoker with Systolic BP of 140 mmHg ($e^{-2.90} \approx 0.05502$).</li>
+    </ol>
+
+    <hr style="border: 0; border-top: 1px dashed #d8b4fe; margin: 10px 0;">
+
+    <p><strong>Step-by-Step Pen-and-Paper Solution:</strong></p>
+    <p><strong>(a) Odds Ratio for Smoker:</strong></p>
+    <div class="scratchpad">
+    OR = e^(beta_smoker) = e^(0.90) ≈ 2.46
+    </div>
+    <p>$$\boxed{\mathbf{\text{OR}_{\text{Smoker}} = 2.46}}$$</p>
+    <p><strong>Clinical Interpretation:</strong> Holding age and blood pressure constant, the odds of developing coronary heart disease for a smoker are <strong>2.46 times (or 146% higher than)</strong> the odds for a non-smoker.</p>
+
+    <p><strong>(b) 10-Year Age Increase Odds Multiplier:</strong></p>
+    <div class="scratchpad">
+    Delta_Age = 10
+    Exponent = beta_age * Delta_Age = 0.05 * 10 = 0.50
+    OR_10yrs = e^(0.50) ≈ 1.6487
+    Percentage Increase = (OR - 1) * 100% = (1.6487 - 1) * 100% = +64.87%
+    </div>
+    <p>$$\boxed{\mathbf{\text{Odds Increase} = +64.87\%}}$$</p>
+
+    <p><strong>(c) Probability Calculation for Patient:</strong></p>
+    <div class="scratchpad">
+    z = -3.80 + 0.05 * (60) + 0.02 * (140) + 0.90 * (1)
+      = -3.80 + 3.00 + 2.80 + 0.90
+      = -3.80 + 6.70 = +2.90
+    e^(-z) = e^(-2.90) ≈ 0.05502
+    p = 1 / (1 + 0.05502) = 1 / 1.05502 ≈ 0.9478 (94.78%)
+    </div>
+    <p>$$\boxed{\mathbf{p = 0.9478 \quad (94.78\% \text{ probability of heart disease})}}$$</p>
+</div>
+
+<!-- PROBLEM 7 -->
+<div class="card card-problem">
+    <div class="card-title"><span>Problem 2.7: Classification Metrics & Cost-Sensitive Threshold Optimization</span> <span class="badge badge-marks">8 Marks</span></div>
+    <p><strong>Question:</strong> An automated fraud detection system evaluates 1,000 transactions and yields the following confusion matrix at default threshold $\tau = 0.5$:</p>
+    <table style="width: 60%; margin: 6px auto;">
+        <tr><th></th><th>Predicted Fraud (1)</th><th>Predicted Legit (0)</th></tr>
+        <tr><th>Actual Fraud (1)</th><td>$\text{TP} = 80$</td><td>$\text{FN} = 20$</td></tr>
+        <tr><th>Actual Legit (0)</th><td>$\text{FP} = 40$</td><td>$\text{TN} = 860$</td></tr>
+    </table>
+    <ol type="a">
+        <li>Calculate Precision, Recall (Sensitivity), Specificity, and F1-Score.</li>
+        <li>Suppose missing a fraudulent transaction incurs a loss of $C_{\text{FN}} = \$500$, while falsely freezing a legitimate card causes customer friction costing $C_{\text{FP}} = \$20$. Derive the mathematically optimal decision threshold $\tau^*$ that minimizes expected financial loss.</li>
+    </ol>
+
+    <hr style="border: 0; border-top: 1px dashed #d8b4fe; margin: 10px 0;">
+
+    <p><strong>Step-by-Step Pen-and-Paper Solution:</strong></p>
+    <p><strong>(a) Standard Metrics:</strong></p>
+    <div class="scratchpad">
+    Precision = TP / (TP + FP) = 80 / (80 + 40) = 80 / 120 = 0.6667 (66.67%)
+    Recall (Sensitivity) = TP / (TP + FN) = 80 / (80 + 20) = 80 / 100 = 0.8000 (80.00%)
+    Specificity = TN / (TN + FP) = 860 / (860 + 40) = 860 / 900 = 0.9556 (95.56%)
+    F1-Score = 2 * (Precision * Recall) / (Precision + Recall)
+             = 2 * (0.6667 * 0.8000) / (0.6667 + 0.8000)
+             = 2 * (0.5333) / (1.4667) = 1.0667 / 1.4667 ≈ 0.7273 (72.73%)
+    </div>
+    <p>
+    $$\boxed{\mathbf{\text{Precision} = 66.67\%}}, \quad \boxed{\mathbf{\text{Recall} = 80.00\%}}, \quad \boxed{\mathbf{\text{F1} = 0.7273}}$$
+    </p>
+
+    <p><strong>(b) Derivation of Optimal Decision Threshold $\tau^*$:</strong></p>
+    <p>Let $p = P(Y=1|\mathbf{x})$. The expected cost of classifying as Fraud ($\hat{Y}=1$) vs Legit ($\hat{Y}=0$) is:</p>
+    <div class="scratchpad">
+    Expected Cost(Predict 1) = (1 - p) * C_FP
+    Expected Cost(Predict 0) = p * C_FN
+
+    We predict Fraud (Class 1) whenever:
+    Expected Cost(Predict 1) < Expected Cost(Predict 0)
+    (1 - p) * C_FP < p * C_FN
+    C_FP - p * C_FP < p * C_FN
+    C_FP < p * (C_FN + C_FP)
+    p > C_FP / (C_FN + C_FP)
+    </div>
+    <div class="math-display">
+    $$\boxed{\mathbf{\tau^* = \frac{C_{\text{FP}}}{C_{\text{FP}} + C_{\text{FN}}}} = \frac{20}{20 + 500} = \frac{20}{520} \approx \mathbf{0.0385 \quad (3.85\%)}}$$
+    </div>
+    <p><strong>Critical Conclusion:</strong> The bank should flag transactions as fraud whenever the model's predicted probability exceeds just <strong>$3.85\%$</strong>! Relying on the default threshold of $0.50$ costs the bank massive financial losses due to missed frauds.</p>
+</div>
+
+
+
+<!-- ========================================================================= -->
+<!-- PART 3: WHERE LOGISTIC REGRESSION SHINES (STRENGTHS) -->
+<!-- ========================================================================= -->
+<div class="page-break"></div>
+<h2>Part 3: Where Logistic Regression Shines (Comprehensive Strengths)</h2>
+<p>In written university exams and technical viva voce, professors expect you to articulate exactly why Logistic Regression remains an industry standard despite the rise of Deep Learning.</p>
+
+<div class="card card-good">
+    <div class="card-title"><span>Top 6 Strengths & Strategic Advantages</span></div>
+    <ol>
+        <li>
+            <strong>True Calibrated Probabilities (Not Just Hard Class Labels):</strong>
+            <p>Unlike Support Vector Machines (which output uncalibrated geometric margins) or Perceptrons, Logistic Regression directly outputs a continuous Bayesian posterior probability $P(Y=1|\mathbf{x}) \in (0, 1)$. This is indispensable in risk-sensitive applications (medicine, loan credit underwriting, fraud detection) where decisions require threshold tuning.</p>
+        </li>
+        <li>
+            <strong>Exceptional Interpretability & Explainability (Odds Ratio):</strong>
+            <p>Every learned weight $w_j$ has a direct, rigorous statistical meaning: $e^{w_j}$ is the multiplicative change in the odds of the outcome per unit increase in feature $x_j$, holding all other features fixed. In regulated industries governed by GDPR and the Equal Credit Opportunity Act, models must provide adverse action reasons—a feat easily satisfied by Logistic Regression.</p>
+        </li>
+        <li>
+            <strong>Guaranteed Global Convergence (Strictly Convex Loss):</strong>
+            <p>As proven in Section 1.6, the Binary Cross-Entropy loss surface is strictly convex everywhere. There are <strong>no suboptimal local minima</strong> or dangerous plateaus that plague Deep Neural Networks. Standard first-order (SGD) and second-order (Newton-Raphson / IRLS, L-BFGS) algorithms reliably converge to the exact global optimum.</p>
+        </li>
+        <li>
+            <strong>Blazing Fast Training and Microsecond Inference ($\mathcal{O}(d)$):</strong>
+            <p>At inference time, calculating $\hat{y} = \sigma(\mathbf{w}^T \mathbf{x} + b)$ requires only $d$ multiplications, $d$ additions, one exponentiation, and one division ($\mathcal{O}(d)$ complexity). A single CPU core can score over 1,000,000 predictions per second, making it ideal for edge devices, ad-click bidding engines, and low-latency APIs.</p>
+        </li>
+        <li>
+            <strong>Streaming & Online Learning via Stochastic Gradient Descent (SGD):</strong>
+            <p>Parameters can be updated one observation at a time: $\mathbf{w} \leftarrow \mathbf{w} - \alpha (\hat{y}^{(i)} - y^{(i)})\mathbf{x}^{(i)}$. The algorithm does not need to store entire terabyte datasets in RAM, enabling real-time streaming updates.</p>
+        </li>
+        <li>
+            <strong>Natural Regularization Integration:</strong>
+            <p>Easily incorporates $L_2$ Ridge penalties to combat collinearity or $L_1$ Lasso penalties for automated sparse feature selection (dropping irrelevant features to zero).</p>
+        </li>
+    </ol>
+</div>
+
+<!-- ========================================================================= -->
+<!-- PART 4: WHERE LOGISTIC REGRESSION IS LACKING (LIMITATIONS) -->
+<!-- ========================================================================= -->
+<h2>Part 4: Where Logistic Regression Lacks (Limitations & Failure Modes)</h2>
+
+<div class="card card-lacking">
+    <div class="card-title"><span>Top 6 Critical Weaknesses & Failure Points</span></div>
+    <ol>
+        <li>
+            <strong>Strict Linear Decision Boundary Constraint:</strong>
+            <p>Logistic regression assumes that the log-odds are a linear combination of features. If the true underlying decision boundary is non-linear (e.g., XOR patterns, concentric circles, complex multi-modal manifolds), logistic regression fails catastrophically unless manual polynomial or kernel features are engineered.</p>
+        </li>
+        <li>
+            <strong>Extreme Vulnerability to Multicollinearity:</strong>
+            <p>When independent features are strongly correlated ($r > 0.85$), the Hessian matrix $\mathbf{X}^T \mathbf{D} \mathbf{X}$ becomes near-singular (ill-conditioned). Standard errors of the coefficients explode, signs of coefficients flip erratically, and feature importance becomes uninterpretable.</p>
+        </li>
+        <li>
+            <strong>Sensitivity to Outliers & High-Leverage Observations:</strong>
+            <p>Because cross-entropy penalizes confident errors logarithmically ($-\ln(\hat{y}) \to \infty$ as $\hat{y} \to 0$), a single mislabeled sample far from the cluster centroid exerts massive torque on the separating hyperplane, degrading accuracy for hundreds of normal samples.</p>
+        </li>
+        <li>
+            <strong>Inability to Automatically Capture High-Order Feature Interactions:</strong>
+            <p>Unlike Decision Trees and Random Forests, which naturally capture conditional rules like <em>"IF Age > 50 AND Smoker == 1 THEN High Risk"</em>, logistic regression treats each feature independently unless explicit cross-product terms ($x_1 \cdot x_2$) are manually created.</p>
+        </li>
+        <li>
+            <strong>Severe Breakdown on High-Dimensional Data ($d \gg m$):</strong>
+            <p>When the number of features $d$ exceeds sample size $m$, logistic regression overfits completely, memorizing noise and producing infinite parameter estimates without heavy regularization.</p>
+        </li>
+        <li>
+            <strong>Hard Saturation & Vanishing Gradients:</strong>
+            <p>For large magnitude logits ($|z| > 6$), $\sigma'(z) \to 0$. While cross-entropy cancels this in first-order gradients, in multi-layer architectures or second-order methods, saturation can stall parameter updates.</p>
+        </li>
+    </ol>
+</div>
+
+
+
+<!-- ========================================================================= -->
+<!-- PART 5: EDGE CASES, MATHEMATICAL TRAPS & EXAM PITFALLS -->
+<!-- ========================================================================= -->
+<div class="page-break"></div>
+<h2>Part 5: Edge Cases, Mathematical Traps & Tricky Exam Pitfalls</h2>
+<p><em>These are high-yield questions specifically designed by professors to test deep mathematical maturity.</em></p>
+
+<!-- Embedded Figure 4 -->
+<div class="fig-container">
+    <img src="images/fig4_edge_cases.png" alt="Edge cases">
+    <div class="fig-caption">Figure 4: (Left) The XOR Problem: Proving why no single hyperplane can separate classes. (Right) Complete Separation: Weights diverge to infinity ($\|\mathbf{w}\| \to \infty$) as the model chases zero loss.</div>
+</div>
+
+<div class="card card-edge">
+    <div class="card-title"><span>Edge Case 1: Complete & Quasi-Complete Separation (The "Infinity" Trap & Hauck-Donner Effect)</span> <span class="badge badge-edge">Critical Exam Concept</span></div>
+    <p><strong>The Phenomenon:</strong> What happens when a linear hyperplane can <em>perfectly</em> separate the two classes with zero training errors?</p>
+    <p><strong>The Mathematical Catastrophe:</strong></p>
+    <p>The Maximum Likelihood Estimator (MLE) attempts to drive the loss to absolute zero: $J(\mathbf{w}) \to 0$. To achieve $\hat{y}_i = 1$ for Class 1, the model requires $z_i \to +\infty$. To achieve $\hat{y}_i = 0$ for Class 0, the model requires $z_i \to -\infty$.</p>
+    <div class="math-display">
+    $$z_i = \mathbf{w}^T \mathbf{x}_i + b \to \pm\infty \implies \mathbf{\|\mathbf{w}\| \to \infty}$$
+    </div>
+    <ul>
+        <li><strong>Gradient Descent Divergence:</strong> Gradient descent will run forever; weights will grow larger with every iteration without ever converging!</li>
+        <li><strong>Standard Error Explosion:</strong> The covariance matrix $\text{Var}(\hat{\mathbf{w}}) = (\mathbf{X}^T \mathbf{D} \mathbf{X})^{-1} \to \infty$.</li>
+        <li><strong>The Hauck-Donner Effect:</strong> In statistical tests, the Wald test statistic is $W = \frac{\hat{w}_j}{\text{SE}(\hat{w}_j)}$. As $\hat{w}_j \to \infty$, the denominator $\text{SE}(\hat{w}_j)$ grows exponentially faster than the numerator. Consequently, $W \to 0$! A standard software package will report a p-value of $p \approx 1.0$, falsely concluding that a <em>perfect predictor</em> is statistically insignificant!</li>
+    </ul>
+    <p><strong>Solutions:</strong></p>
+    <ol>
+        <li><strong>$L_2$ Regularization (Ridge Penalty):</strong> Adds $\frac{\lambda}{2m}\|\mathbf{w}\|_2^2$ to the cost function, preventing weights from growing to infinity.</li>
+        <li><strong>Firth's Penalized Likelihood:</strong> Maximizes $\ell^*(\mathbf{w}) = \ell(\mathbf{w}) + \frac{1}{2}\ln|\mathbf{I}(\mathbf{w})|$ where $\mathbf{I}(\mathbf{w})$ is the Fisher Information matrix, providing finite estimates.</li>
+    </ol>
+</div>
+
+<div class="card card-edge">
+    <div class="card-title"><span>Edge Case 2: Pen-and-Paper Proof: Why Logistic Regression Cannot Solve XOR</span> <span class="badge badge-marks">5 Marks</span></div>
+    <p><strong>Theorem:</strong> No set of linear weights $(w_1, w_2, b)$ can solve the exclusive-OR (XOR) classification problem.</p>
+    <p><strong>Proof by Contradiction:</strong></p>
+    <p>The XOR truth table requires a decision boundary $z = w_1 x_1 + w_2 x_2 + b = 0$ such that:</p>
+    <ul>
+        <li>For $(0, 0) \to y = 0$: $w_1(0) + w_2(0) + b < 0 \implies \mathbf{b < 0}$ &emsp; <em>(Inequality 1)</em></li>
+        <li>For $(1, 1) \to y = 0$: $w_1(1) + w_2(1) + b < 0 \implies \mathbf{w_1 + w_2 + b < 0}$ &emsp; <em>(Inequality 2)</em></li>
+        <li>For $(1, 0) \to y = 1$: $w_1(1) + w_2(0) + b \ge 0 \implies \mathbf{w_1 + b \ge 0}$ &emsp; <em>(Inequality 3)</em></li>
+        <li>For $(0, 1) \to y = 1$: $w_1(0) + w_2(1) + b \ge 0 \implies \mathbf{w_2 + b \ge 0}$ &emsp; <em>(Inequality 4)</em></li>
+    </ul>
+    <p>Now, add Inequality 3 and Inequality 4 together:</p>
+    <div class="math-display">
+    $$(w_1 + b) + (w_2 + b) \ge 0 \implies \mathbf{w_1 + w_2 + 2b \ge 0}$$
+    </div>
+    <p>Rewrite this as:</p>
+    <div class="math-display">
+    $$(w_1 + w_2 + b) + b \ge 0$$
+    </div>
+    <p>However, from Inequality 2 we know that $(w_1 + w_2 + b) < 0$, and from Inequality 1 we know that $b < 0$. The sum of two strictly negative numbers must be strictly negative:</p>
+    <div class="math-display">
+    $$\text{Negative} + \text{Negative} < 0$$
+    </div>
+    <p>This contradicts $(w_1 + w_2 + b) + b \ge 0$! Since this system of inequalities has no simultaneous mathematical solution, a linear logistic regression classifier <strong>fundamentally cannot classify XOR data</strong>. $\blacksquare$</p>
+    <p><em>Exam Fix:</em> Add an interaction feature $x_3 = x_1 \cdot x_2$ or use a Multi-Layer Perceptron (neural network).</p>
+</div>
+
+
+
+<div class="card card-edge">
+    <div class="card-title"><span>Edge Case 3: Extreme Class Imbalance & The "Intercept Absorption" Trap</span></div>
+    <p><strong>The Scenario:</strong> In fraud detection, $99.9\%$ of transactions are legitimate ($y=0$) and $0.1\%$ are fraudulent ($y=1$).</p>
+    <p><strong>The Consequence:</strong></p>
+    <p>A naive logistic regression model will simply predict $\hat{y}_i = 0$ for every sample, achieving $99.9\%$ overall accuracy but <strong>$0\%$ Recall on fraud</strong>!</p>
+    <p>The bias term $b$ absorbs the base rate (prior probability) of the dataset:</p>
+    <div class="math-display">
+    $$b \approx \ln\left(\frac{\pi}{1 - \pi}\right) = \ln\left(\frac{0.001}{0.999}\right) \approx \mathbf{-6.90}$$
+    </div>
+    <p>Because $b = -6.90$, for any normal feature input, $z = \mathbf{w}^T \mathbf{x} - 6.90$ remains deeply negative, and $\sigma(z) < 0.05 \ll 0.50$.</p>
+    <p><strong>Exam Solutions:</strong></p>
+    <ol>
+        <li><strong>Prior Bias Correction (Offset Correction):</strong> Train on a balanced sub-sample with prior $\pi_0 = 0.5$, then adjust the intercept for inference on the true population with prior $\pi$:
+            <div class="math-display">
+            $$b_{\text{corrected}} = b_{\text{trained}} - \ln\left(\frac{\pi_0}{1 - \pi_0}\right) + \ln\left(\frac{\pi}{1 - \pi}\right)$$
+            </div>
+        </li>
+        <li><strong>Weighted Binary Cross-Entropy Loss:</strong> Assign higher penalty weight $w_{\text{pos}}$ to minority samples:
+            <div class="math-display">
+            $$J_{\text{weighted}} = -\frac{1}{m}\sum \Big[ w_{\text{pos}} \cdot y_i \ln(\hat{y}_i) + (1 - y_i)\ln(1 - \hat{y}_i) \Big]$$
+            </div>
+        </li>
+        <li><strong>Threshold Tuning:</strong> Pick threshold $\tau^*$ via ROC / Precision-Recall curve rather than default $0.5$.</li>
+    </ol>
+</div>
+
+<div class="card card-edge">
+    <div class="card-title"><span>Edge Case 4: Perfect Collinearity & Numerical Overflow / Underflow</span></div>
+    <p><strong>1. Exact Collinearity ($x_2 = 2 x_1$):</strong></p>
+    <p>If $x_2$ is an exact linear multiple of $x_1$, the design matrix $\mathbf{X}$ is rank-deficient. The linear predictor becomes $z = (w_1 + 2w_2)x_1 + b$. An infinite number of $(w_1, w_2)$ pairs yield the identical decision boundary (e.g., $w_1=4, w_2=0$ vs $w_1=0, w_2=2$ vs $w_1=2, w_2=1$). The Hessian matrix is non-invertible, causing standard Newton-Raphson solvers to crash.</p>
+    <p><strong>2. Floating-Point Underflow/Overflow in Sigmoid & Log-Loss:</strong></p>
+    <p>In computer implementation, naive calculation of $e^{-z}$ for $z = -1000$ triggers a runtime divide-by-zero or floating-point overflow. Furthermore, $\ln(0)$ evaluates to $-\infty$ (NaN).</p>
+    <p><strong>Numerically Stable Piecewise Sigmoid:</strong></p>
+    <div class="math-display">
+    $$\sigma(z) = \begin{cases} \frac{1}{1 + e^{-z}} & \text{if } z \ge 0 \\ \frac{e^z}{1 + e^z} & \text{if } z < 0 \end{cases}$$
+    </div>
+    <p><strong>Stable Log-Sum-Exp / Softplus formulation for Cross-Entropy:</strong></p>
+    <div class="math-display">
+    $$\ln(\sigma(z)) = -\ln(1 + e^{-z}) = -\text{softplus}(-z) = -\max(0, -z) - \ln\big(1 + e^{-|-z|}\big)$$
+    </div>
+</div>
+
+
+
+<!-- ========================================================================= -->
+<!-- PART 6: FAST-TRACK EXAM CHEATSHEET & COMPARISON MATRIX -->
+<!-- ========================================================================= -->
+<div class="page-break"></div>
+<h2>Part 6: Fast-Track Exam Hall Cheatsheet & Comparison Matrix</h2>
+
+<h3>6.1 Comprehensive Classifier Comparison Matrix (Guaranteed Exam Question)</h3>
+<table>
+    <tr>
+        <th>Attribute</th>
+        <th>Logistic Regression</th>
+        <th>Linear Regression</th>
+        <th>Support Vector Machine (SVM)</th>
+        <th>Naive Bayes</th>
+    </tr>
+    <tr>
+        <td><strong>Model Type</strong></td>
+        <td>Discriminative</td>
+        <td>Discriminative (Regression)</td>
+        <td>Discriminative</td>
+        <td><strong>Generative</strong></td>
+    </tr>
+    <tr>
+        <td><strong>Target Variable</strong></td>
+        <td>Discrete ($y \in \{0, 1\}$)</td>
+        <td>Continuous ($y \in \mathbb{R}$)</td>
+        <td>Discrete ($y \in \{-1, +1\}$)</td>
+        <td>Discrete ($y \in \{1, \dots, K\}$)</td>
+    </tr>
+    <tr>
+        <td><strong>Output</strong></td>
+        <td>Calibrated Probabilities $[0, 1]$</td>
+        <td>Unbounded Real Values $(-\infty, \infty)$</td>
+        <td>Uncalibrated Margins (or class label)</td>
+        <td>Posterior Probabilities $P(Y|X)$</td>
+    </tr>
+    <tr>
+        <td><strong>Loss Function</strong></td>
+        <td>Binary Cross-Entropy (Log-Loss)</td>
+        <td>Mean Squared Error (MSE / RSS)</td>
+        <td>Hinge Loss $\max(0, 1 - y \cdot f(x))$</td>
+        <td>Negative Log-Likelihood (Joint)</td>
+    </tr>
+    <tr>
+        <td><strong>Decision Boundary</strong></td>
+        <td>Linear ($w^T x + b = 0$)</td>
+        <td>Continuous Hyperplane</td>
+        <td>Maximum Margin Hyperplane</td>
+        <td>Linear or Quadratic (QDA-like)</td>
+    </tr>
+    <tr>
+        <td><strong>Convexity</strong></td>
+        <td>Strictly Convex</td>
+        <td>Strictly Convex</td>
+        <td>Strictly Convex (Quadratic Prog)</td>
+        <td>Closed-form counting (No GD)</td>
+    </tr>
+    <tr>
+        <td><strong>Outlier Sensitivity</strong></td>
+        <td>Moderate (High if mislabeled)</td>
+        <td><strong>Very High</strong></td>
+        <td><strong>Low</strong> (Only support vectors matter)</td>
+        <td>Low to Moderate</td>
+    </tr>
+    <tr>
+        <td><strong>Key Assumption</strong></td>
+        <td>Linearity of log-odds; independent observations</td>
+        <td>Normality of errors; homoscedasticity; linearity</td>
+        <td>Linear separability (or kernel trick)</td>
+        <td><strong>Conditional Feature Independence</strong></td>
+    </tr>
+</table>
+
+<h3>6.2 Golden Formula Sheet (Exam Hall Quick Revision)</h3>
+<div class="card card-theory">
+    <div class="card-title"><span>Essential Formula Cheat Sheet</span></div>
+    <table style="margin: 0;">
+        <tr>
+            <td><strong>Odds:</strong> $\text{Odds} = \frac{p}{1 - p}$</td>
+            <td><strong>Logit (Log-Odds):</strong> $z = \ln\left(\frac{p}{1-p}\right) = \mathbf{w}^T \mathbf{x} + b$</td>
+        </tr>
+        <tr>
+            <td><strong>Sigmoid:</strong> $\sigma(z) = \frac{1}{1 + e^{-z}}$</td>
+            <td><strong>Sigmoid Derivative:</strong> $\sigma'(z) = \sigma(z)(1 - \sigma(z))$</td>
+        </tr>
+        <tr>
+            <td><strong>Cross-Entropy:</strong> $J = -\frac{1}{m}\sum [y_i \ln \hat{y}_i + (1-y_i)\ln(1-\hat{y}_i)]$</td>
+            <td><strong>Gradient Vector:</strong> $\frac{\partial J}{\partial w_j} = \frac{1}{m}\sum (\hat{y}_i - y_i) x_{ij}$</td>
+        </tr>
+        <tr>
+            <td><strong>GD Update:</strong> $w_j \leftarrow w_j - \alpha \frac{\partial J}{\partial w_j}$</td>
+            <td><strong>$L_2$ Decay Update:</strong> $w_j \leftarrow w_j\left(1 - \frac{\alpha \lambda}{m}\right) - \alpha \frac{\partial J_0}{\partial w_j}$</td>
+        </tr>
+        <tr>
+            <td><strong>Softmax Prob:</strong> $P(Y=k|\mathbf{x}) = \frac{e^{z_k}}{\sum_{j} e^{z_j}}$</td>
+            <td><strong>Optimal Threshold:</strong> $\tau^* = \frac{C_{\text{FP}}}{C_{\text{FP}} + C_{\text{FN}}}$</td>
+        </tr>
+    </table>
+</div>
+
+<h3>6.3 Top 5 Quick Viva Voce Questions & Answers</h3>
+<ol>
+    <li>
+        <strong>Q: Can Logistic Regression handle multi-class classification?</strong><br>
+        <strong>A:</strong> Yes, via two primary approaches: (1) <strong>One-vs-Rest (OvR):</strong> Train $K$ independent binary classifiers and pick the class with highest probability score; (2) <strong>Multinomial / Softmax Regression:</strong> Generalizes the sigmoid function to normalize a vector of $K$ logits simultaneously.
+    </li>
+    <li>
+        <strong>Q: What is the learning rate $\alpha$ and what happens if it is set too high or too low?</strong><br>
+        <strong>A:</strong> The learning rate controls the step size in parameter updates. If $\alpha$ is too small, gradient descent converges excessively slowly. If $\alpha$ is too large, the update steps will overshoot the minimum, causing the cost function to oscillate or diverge to infinity.
+    </li>
+    <li>
+        <strong>Q: How do you interpret a negative weight ($w_j < 0$)?</strong><br>
+        <strong>A:</strong> A negative weight implies that as feature $x_j$ increases, the log-odds of the positive class decrease. Specifically, the odds are multiplied by $e^{w_j} < 1$, reducing the predicted probability $P(Y=1|\mathbf{x})$.
+    </li>
+    <li>
+        <strong>Q: Does feature scaling (Standardization / Min-Max) matter for Logistic Regression?</strong><br>
+        <strong>A:</strong> For unregularized logistic regression, scaling does not alter the optimal decision boundary, but greatly accelerates gradient descent convergence by creating spherical loss contours. For <strong>regularized</strong> logistic regression ($L_1 / L_2$), feature scaling is <strong>mandatory</strong> because features with larger numerical scales will be penalized unfairly.
+    </li>
+    <li>
+        <strong>Q: What is the relationship between Logistic Regression and Neural Networks?</strong><br>
+        <strong>A:</strong> A Logistic Regression classifier is mathematically identical to a <strong>single artificial neuron (Perceptron) with a Sigmoid activation function and Cross-Entropy loss</strong>. A Deep Neural Network is a stacked cascade of such logistic units with non-linear hidden representations.
+    </li>
+</ol>
+
+<div style="text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1.5px solid #cbd5e1; font-size: 8.5pt; color: #64748b;">
+    <strong>MACSE504 Machine Learning</strong> | Master Examination Reference Manual | Prepared for Comprehensive Written Exam Preparation
+</div>
+
+</body>
+</html>

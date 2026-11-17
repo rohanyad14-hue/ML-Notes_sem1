@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 400" width="100%" height="100%">
+  <rect width="700" height="400" fill="#f8fafc" rx="10" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="350" y="32" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#1e3a8a" text-anchor="middle">Principal Component Analysis (PCA): Maximal Variance Projection</text>
+
+  <!-- Coordinate Axes -->
+  <line x1="80" y1="340" x2="620" y2="340" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="80" y1="340" x2="80" y2="60" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="630" y="345" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#64748b">x₁ (Feature 1)</text>
+  <text x="75" y="50" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#64748b">x₂ (Feature 2)</text>
+
+  <!-- PC1 Vector (Max Variance) -->
+  <line x1="120" y1="300" x2="560" y2="100" stroke="#2563eb" stroke-width="3.5" stroke-dasharray="none"/>
+  <text x="575" y="95" font-family="Inter, sans-serif" font-size="14" font-weight="800" fill="#2563eb">PC₁ (Eigenvector e₁, λ₁)</text>
+
+  <!-- PC2 Vector (Orthogonal) -->
+  <line x1="280" y1="310" x2="420" y2="70" stroke="#dc2626" stroke-width="3" stroke-dasharray="6,4"/>
+  <text x="435" y="70" font-family="Inter, sans-serif" font-size="13" font-weight="800" fill="#dc2626">PC₂ ⊥ PC₁ (e₂, λ₂)</text>
+
+  <!-- Mean Centered Origin -->
+  <circle cx="340" cy="200" r="6" fill="#0f172a"/>
+  <text x="350" y="218" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#0f172a">Mean (μ)</text>
+
+  <!-- Data points along PC1 with variance -->
+  <!-- Point 1 -->
+  <circle cx="180" cy="280" r="5" fill="#3b82f6"/>
+  <line x1="180" y1="280" x2="198" y2="265" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.5"/>
+  <circle cx="198" cy="265" r="3.5" fill="#1d4ed8"/>
+
+  <!-- Point 2 -->
+  <circle cx="230" cy="235" r="5" fill="#3b82f6"/>
+  <line x1="230" y1="235" x2="242" y2="245" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.5"/>
+  <circle cx="242" cy="245" r="3.5" fill="#1d4ed8"/>
+
+  <!-- Point 3 -->
+  <circle cx="290" cy="240" r="5" fill="#3b82f6"/>
+  <line x1="290" y1="240" x2="308" y2="215" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.5"/>
+  <circle cx="308" cy="215" r="3.5" fill="#1d4ed8"/>
+
+  <!-- Point 4 -->
+  <circle cx="380" cy="170" r="5" fill="#3b82f6"/>
+  <line x1="380" y1="170" x2="374" y2="185" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.5"/>
+  <circle cx="374" cy="185" r="3.5" fill="#1d4ed8"/>
+
+  <!-- Point 5 -->
+  <circle cx="450" cy="160" r="5" fill="#3b82f6"/>
+  <line x1="450" y1="160" x2="440" y2="155" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.5"/>
+  <circle cx="440" cy="155" r="3.5" fill="#1d4ed8"/>
+
+  <!-- Point 6 -->
+  <circle cx="500" cy="115" r="5" fill="#3b82f6"/>
+  <line x1="500" y1="115" x2="506" y2="125" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="1.5"/>
+  <circle cx="506" cy="125" r="3.5" fill="#1d4ed8"/>
+
+  <!-- Variance Spread indicator -->
+  <path d="M 180 320 Q 340 280 520 120" fill="none" stroke="#059669" stroke-width="2" stroke-dasharray="4,4"/>
+  <text x="360" y="325" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#059669">Maximal Variance Direction (Eigenvalue λ₁ ≫ λ₂)</text>
+
+  <!-- Projection Legend / Notes -->
+  <rect x="90" y="70" width="220" height="75" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <circle cx="105" cy="88" r="4.5" fill="#3b82f6"/>
+  <text x="118" y="92" font-family="Inter, sans-serif" font-size="11" fill="#1e2937">Original 2D Data Point xᵢ</text>
+  <circle cx="105" cy="110" r="3.5" fill="#1d4ed8"/>
+  <text x="118" y="114" font-family="Inter, sans-serif" font-size="11" fill="#1e2937">1D Projected Coordinate zᵢ = e₁ᵀ xᵢ</text>
+  <line x1="100" y1="130" x2="112" y2="130" stroke="#94a3b8" stroke-dasharray="3,3" stroke-width="2"/>
+  <text x="118" y="133" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Reconstruction Residual Error</text>
+</svg>

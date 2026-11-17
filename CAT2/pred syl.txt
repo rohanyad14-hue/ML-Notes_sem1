@@ -1,0 +1,15 @@
+MOD :2
+- Label Spreading Algorithm 
+- Label Propagation Algorithm 
+– Naive Bayes
+MOD :3
+Policy-Based RL: Applications of Policy - Policy Gradient Methods - Policy
+Optimization Methods -Value-Based RL - Value Functions - Q-Learning - ModelBased RL - Model-based RL with model-free RL - Model-based RL with planning 
+MOD :4
+Overview of Dimensionality Reduction, Principal Component Analysis (PCA):
+Variants and applications- Locally Linear Embedding Algorithm (LLE): t-SNE,
+Principles - Applications, limitations
+MOD :5
+Cross Validation and its Types: schemes,
+Estimating the model generalization error with CV- Hyperparameter Tuning - Group
+Cross-Validation

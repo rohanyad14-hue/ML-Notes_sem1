@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 320" width="100%" height="280">
+  <rect width="700" height="320" fill="#f8fafc" rx="8" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="210" y="28" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1e3a8a">The Bias-Variance Tradeoff & Model Complexity</text>
+  
+  <!-- Axes -->
+  <line x1="80" y1="260" x2="640" y2="260" stroke="#334155" stroke-width="2"/>
+  <line x1="80" y1="260" x2="80" y2="45" stroke="#334155" stroke-width="2"/>
+  <text x="280" y="290" font-family="sans-serif" font-size="12" font-weight="bold" fill="#334155">Model Complexity (Degree / Depth / Capacity)</text>
+  <text x="18" y="45" font-family="sans-serif" font-size="12" font-weight="bold" fill="#334155">Error</text>
+
+  <!-- Underfitting & Overfitting Zones -->
+  <rect x="80" y="45" width="180" height="215" fill="#fef2f2" opacity="0.6"/>
+  <text x="100" y="70" font-family="sans-serif" font-size="11" font-weight="bold" fill="#b91c1c">Underfitting Zone</text>
+  <text x="100" y="85" font-family="sans-serif" font-size="9.5" fill="#7f1d1d">High Bias, Low Variance</text>
+
+  <rect x="420" y="45" width="220" height="215" fill="#fef2f2" opacity="0.6"/>
+  <text x="480" y="70" font-family="sans-serif" font-size="11" font-weight="bold" fill="#b91c1c">Overfitting Zone</text>
+  <text x="480" y="85" font-family="sans-serif" font-size="9.5" fill="#7f1d1d">Low Bias, High Variance</text>
+
+  <!-- Optimal Zone -->
+  <rect x="260" y="45" width="160" height="215" fill="#f0fdf4" opacity="0.7"/>
+  <text x="290" y="70" font-family="sans-serif" font-size="11" font-weight="bold" fill="#15803d">Optimal Sweet Spot</text>
+  <text x="290" y="85" font-family="sans-serif" font-size="9.5" fill="#14532d">Minimum Total Error</text>
+
+  <!-- Bias^2 Curve (Decreasing) -->
+  <path d="M 90,70 Q 220,180 620,245" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="5,4"/>
+  <text x="120" y="145" font-family="sans-serif" font-size="11" font-weight="bold" fill="#2563eb">Bias²</text>
+
+  <!-- Variance Curve (Increasing) -->
+  <path d="M 90,250 Q 380,240 620,65" fill="none" stroke="#ea580c" stroke-width="2.5" stroke-dasharray="5,4"/>
+  <text x="560" y="145" font-family="sans-serif" font-size="11" font-weight="bold" fill="#ea580c">Variance</text>
+
+  <!-- Total Error Curve (U-Shape) -->
+  <path d="M 90,135 Q 330,225 620,80" fill="none" stroke="#dc2626" stroke-width="3.5"/>
+  <text x="350" y="165" font-family="sans-serif" font-size="12" font-weight="bold" fill="#dc2626">Total Generalization Error</text>
+
+  <!-- Optimum marker -->
+  <circle cx="340" cy="180" r="5" fill="#16a34a"/>
+  <line x1="340" y1="180" x2="340" y2="260" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="3,3"/>
+  <text x="315" y="275" font-family="sans-serif" font-size="10.5" font-weight="bold" fill="#16a34a">Optimal Model</text>
+</svg>
